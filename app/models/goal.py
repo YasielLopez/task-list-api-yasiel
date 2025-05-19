@@ -27,3 +27,5 @@ class Goal(db.Model):
         goal_dict = self.to_dict()
         goal_dict["tasks"] = [task.to_dict(include_goal_id=True) for task in self.tasks]
         return goal_dict
+    
+    #finished, i think
