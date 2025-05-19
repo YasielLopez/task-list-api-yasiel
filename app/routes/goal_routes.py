@@ -87,7 +87,6 @@ def associate_tasks_with_goal(goal_id):
     request_body = request.get_json()
     task_ids = request_body.get("task_ids", [])
     
-    # Use the validate_model approach as suggested by instructor
     valid_tasks = [task for task in 
                 (get_task_by_id(task_id) for task_id in task_ids) 
                 if task is not None]
