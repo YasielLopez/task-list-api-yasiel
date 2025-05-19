@@ -4,15 +4,12 @@ from ..db import db
 
 class Goal(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column(String(100), nullable=False)
+    title: Mapped[str] = mapped_column(String(100))
     
     tasks = relationship("Task", back_populates="goal", cascade="all, delete-orphan")
     
     @classmethod
     def from_dict(cls, goal_data):
-        """
-        Creates a new Goal instance from a dictionary
-        """
         if not goal_data.get("title"):
             return None
             
@@ -21,9 +18,6 @@ class Goal(db.Model):
         )
     
     def to_dict(self):
-        """
-        Converts the Goal model to a dictionary for API responses
-        """
         return {
             "id": self.id,
             "title": self.title

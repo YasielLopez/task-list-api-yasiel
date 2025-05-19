@@ -14,10 +14,8 @@ OPTIONS = {
         }
 
 def list_options():
-
     for number, feature in OPTIONS.items():
         print(f"{number}. {feature}")
-
 
 def make_choice():
     valid_choices = OPTIONS.keys()
@@ -123,10 +121,8 @@ def delete_all_tasks():
         print_surround_stars("Deleted all tasks.")
 
 def run_cli():
-    
     play = True
     while play:
-
         # get input and validate
         choice = make_choice()
 
@@ -150,7 +146,6 @@ def run_cli():
             list_options()
         elif choice=='10':
             play=False
-
 
 print("Welcome to Task List CLI")
 print("These are the actions you can take:")
