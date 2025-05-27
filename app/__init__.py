@@ -1,5 +1,8 @@
-from flask import Flask
+from flask import Flask, request
 from .db import db, migrate
+from .routes.task_routes import bp as tasks_bp
+from .routes.goal_routes import bp as goals_bp
+from .models import task, goal
 import os
 
 def create_app(config=None):
@@ -13,10 +16,20 @@ def create_app(config=None):
     db.init_app(app)
     migrate.init_app(app, db)
     
-    from .routes.task_routes import bp as tasks_bp
-    from .routes.goal_routes import bp as goals_bp
-    
     app.register_blueprint(tasks_bp)
     app.register_blueprint(goals_bp)
+    
+    @app.errorhandler(404)
+    def handle_not_found(e):
+        if request.path.startswith('/goals'):
+            return {"error": "Goal not found"}, 404
+        elif request.path.startswith('/tasks'):
+            return {"error": "Task not found"}, 404
+        else:
+            return {"error": "Not found"}, 404
+    
+    @app.errorhandler(400)
+    def handle_bad_request(e):
+        return {"details": "Invalid data"}, 400
     
     return app

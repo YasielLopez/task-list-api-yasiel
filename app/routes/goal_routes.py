@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, make_response, abort
 from ..db import db
 from ..models.goal import Goal
 from ..models.task import Task
@@ -20,7 +20,7 @@ def create_goal():
     new_goal = Goal.from_dict(request_body)
     
     if not new_goal:
-        return {"details": "Invalid data"}, 400
+        abort(400)
     
     db.session.add(new_goal)
     db.session.commit()
@@ -37,7 +37,7 @@ def get_goal(goal_id):
     goal = get_goal_by_id(goal_id)
     
     if not goal:
-        return {"error": "Goal not found"}, 404
+        abort(404)
     
     return {"goal": goal.to_dict()}
 
@@ -46,7 +46,7 @@ def update_goal(goal_id):
     goal = get_goal_by_id(goal_id)
     
     if not goal:
-        return {"error": "Goal not found"}, 404
+        abort(404)
     
     request_body = request.get_json()
     
@@ -54,26 +54,30 @@ def update_goal(goal_id):
     
     db.session.commit()
     
-    return "", 204
+    response = make_response("", 204)
+    response.mimetype = "application/json"
+    return response
 
 @bp.route("/<goal_id>", methods=["DELETE"])
 def delete_goal(goal_id):
     goal = get_goal_by_id(goal_id)
     
     if not goal:
-        return {"error": "Goal not found"}, 404
+        abort(404)
     
     db.session.delete(goal)
     db.session.commit()
     
-    return "", 204
+    response = make_response("", 204)
+    response.mimetype = "application/json"
+    return response
 
 @bp.route("/<goal_id>/tasks", methods=["GET"])
 def get_goal_tasks(goal_id):
     goal = get_goal_by_id(goal_id)
     
     if not goal:
-        return {"error": "Goal not found"}, 404
+        abort(404)
     
     return goal.to_dict_with_tasks()
 
@@ -82,7 +86,7 @@ def associate_tasks_with_goal(goal_id):
     goal = get_goal_by_id(goal_id)
     
     if not goal:
-        return {"error": "Goal not found"}, 404
+        abort(404)
     
     request_body = request.get_json()
     task_ids = request_body.get("task_ids", [])
